@@ -1,5 +1,6 @@
 require './game_piece.rb'
 require './player.rb'
+require './board.rb'
 require 'colorize'
 # Imporve initalization in board
 # change @b to @board 
