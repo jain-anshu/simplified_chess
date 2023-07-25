@@ -48,16 +48,19 @@ class Game
   end
 
   def move_too_far(x, y, i, j)
-    #this wont work on diagonal neighbors
-    ((x - i) * (x - i) + (y - j) * (y - j)) != 1
+    ((x - i).abs > 1) || ((y - j).abs > 1)
+  end
+
+  def no_move(x,y,i, j)
+    x == i && y == j
   end
 
   def validate(x, y, i, j)
     err_msg = []
     err_msg << 'Invalid start position' if empty_space(x, y) || not_players_pawn(x, y)
     err_msg << 'Outside board boundaries' if not_within_boundary(i, j)
-    err_msg << 'Pawns can move only One space' if move_too_far(x, y, i, j)
-    p err_msg
+    err_msg << 'Pawns can move only One space at a time' if move_too_far(x, y, i, j)
+    err_msg << 'Pawn cant be moved to its own position' if no_move(x,y, i, j)
     return if err_msg.length == 0
 
     @invalid_move = true
