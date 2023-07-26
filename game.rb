@@ -17,10 +17,10 @@ class Game
     @other_player = 1
     @invalid_move = false
     show
-    play
+   # play
   end
 
-  def has_won?(_player_id)
+  def has_won?
     @pieces_count[@other_player] == 0
   end
 
@@ -30,8 +30,8 @@ class Game
     @pieces_count[@other_player] -= 1
   end
 
-  def not_within_boundary(i, j)
-    i < 0 || i > 7 || j < 0 || j > 7
+  def within_boundary?(i, j)
+    i >= 0 && i <= 7 && j >= 0 && j <= 7
   end
 
   def not_players_pawn(i, j)
@@ -58,7 +58,7 @@ class Game
   def validate(x, y, i, j)
     err_msg = []
     err_msg << 'Invalid start position' if empty_space(x, y) || not_players_pawn(x, y)
-    err_msg << 'Outside board boundaries' if not_within_boundary(i, j)
+    err_msg << 'Outside board boundaries' if within_boundary?(i, j)
     err_msg << 'Pawns can move only One space at a time' if move_too_far(x, y, i, j)
     err_msg << 'Pawn cant be moved to its own position' if no_move(x,y, i, j)
     return if err_msg.length == 0
@@ -81,7 +81,7 @@ class Game
     x, y = get_move_from_position
     i, j = get_move_to_position
     move(x, y, i, j)
-    print "Player id: #{@player_playing} has won" if has_won?(@player_playing)
+    print "Player id: #{@player_playing} has won" if has_won?
     show
     unless @invalid_move
       @player_playing ^= 1
