@@ -9,4 +9,12 @@ class GamePiece
   def print_piece
     "#{@color}#{@rank}"
   end
+
+  def priority
+    return 2 if @rank == 'ST'
+      
+    return 1 if @rank == 'SR'
+      
+    return 0  
+  end
 end

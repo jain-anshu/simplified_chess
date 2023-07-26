@@ -17,17 +17,21 @@ class Game
     @other_player = 1
     @invalid_move = false
     show
-   # play
+    play
   end
 
   def has_won?
     @pieces_count[@other_player] == 0
   end
 
-  def kill(i, j)
+  def kill(x, y, i, j)
     return unless @board.b[i][j].color == @players[@other_player].color
-
-    @pieces_count[@other_player] -= 1
+    if @board.b[i][j].priority <= @board.b[x][y].priority
+      @pieces_count[@other_player] -= 1
+    else
+      print_error "Cannot kill this pawn. Your pawn is lower priority."  
+      @invalid_move = true
+    end      
   end
 
   def within_boundary?(i, j)
@@ -58,7 +62,7 @@ class Game
   def validate(x, y, i, j)
     err_msg = []
     err_msg << 'Invalid start position' if empty_space(x, y) || not_players_pawn(x, y)
-    err_msg << 'Outside board boundaries' if within_boundary?(i, j)
+    err_msg << 'Outside board boundaries' unless within_boundary?(i, j)
     err_msg << 'Pawns can move only One space at a time' if move_too_far(x, y, i, j)
     err_msg << 'Pawn cant be moved to its own position' if no_move(x,y, i, j)
     return if err_msg.length == 0
@@ -70,10 +74,10 @@ class Game
   def move(x, y, i, j)
     @invalid_move = false
     validate(x, y, i, j)
+    kill(x, y, i, j) unless empty_space(i, j)
     return if @invalid_move
 
     gp = @board.remove(x, y)
-    kill(i, j) unless empty_space(i, j)
     @board.place(gp, i, j)
   end
 
