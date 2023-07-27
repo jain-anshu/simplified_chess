@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Board
   attr_reader :b
 
@@ -25,28 +27,20 @@ class Board
 
   def print
     @b.each do |row|
-      print_line = ''
-      row.each do |el|
-        print_line += if el.is_a?(GamePiece)
-                        el.print_piece + ' '
-                      else
-                        ' -  '
-                      end
-      end
+      print_line = row.inject('') { |acc, el| acc + (el.is_a?(GamePiece) ? "#{el.print_piece} " : ' -  ') }
       puts print_line.yellow
     end
   end
 
-  def remove(x, y)
-    return 'Error' unless @b[x][y].is_a?(GamePiece)
+  def remove(row, col)
+    return 'Error' unless @b[row][col].is_a?(GamePiece)
 
-    gp = @b[x][y]
-    @b[x][y] = '-'
+    gp = @b[row][col]
+    @b[row][col] = '-'
     gp
   end
 
-  def place(gamepiece, x, y)
-    puts 'HEre'.blue
-    @b[x][y] = gamepiece
+  def place(gamepiece, row, col)
+    @b[row][col] = gamepiece
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require './game_piece'
 require './player'
 require './board'
@@ -20,30 +22,31 @@ class Game
     play
   end
 
-  def has_won?
-    @pieces_count[@other_player] == 0
+  def won?
+    (@pieces_count[@other_player]).zero?
   end
 
-  def kill(x, y, i, j)
-    return unless @board.b[i][j].color == @players[@other_player].color
-    if @board.b[i][j].priority <= @board.b[x][y].priority
+  def kill(from_x, from_y, to_x, to_y)
+    return unless @board.b[to_x][to_y].color == @players[@other_player].color
+
+    if @board.b[to_x][to_y].priority <= @board.b[from_x][from_y].priority
       @pieces_count[@other_player] -= 1
     else
-      print_error "Cannot kill this pawn. Your pawn is lower priority."  
+      print_error 'Cannot kill this pawn. Your pawn is lower priority.'
       @invalid_move = true
-    end      
+    end
   end
 
-  def within_boundary?(i, j)
-    i >= 0 && i <= 7 && j >= 0 && j <= 7
+  def within_boundary?(to_x, to_y)
+    to_x >= 0 && to_x <= 7 && to_y >= 0 && to_y <= 7
   end
 
-  def not_players_pawn(i, j)
-    (@board.b[i][j].color != @players[@player_playing].color)
+  def not_players_pawn(to_x, to_y)
+    (@board.b[to_x][to_y].color != @players[@player_playing].color)
   end
 
-  def empty_space(i, j)
-    @board.b[i][j] == '-'
+  def empty_space(to_x, to_y)
+    @board.b[to_x][to_y] == '-'
   end
 
   def print_error(msg)
@@ -51,41 +54,41 @@ class Game
     @invalid_move = true
   end
 
-  def move_too_far(x, y, i, j)
-    ((x - i).abs > 1) || ((y - j).abs > 1)
+  def move_too_far(from_x, from_y, to_x, to_y)
+    ((from_x - to_x).abs > 1) || ((from_y - to_y).abs > 1)
   end
 
-  def no_move(x,y,i, j)
-    x == i && y == j
+  def no_move(from_x, from_y, to_x, to_y)
+    from_x == to_x && from_y == to_y
   end
 
-  def validate(x, y, i, j)
+  def validate(from_x, from_y, to_x, to_y)
     err_msg = []
-    err_msg << 'Invalid start position' if empty_space(x, y) || not_players_pawn(x, y)
-    err_msg << 'Outside board boundaries' unless within_boundary?(i, j)
-    err_msg << 'Pawns can move only One space at a time' if move_too_far(x, y, i, j)
-    err_msg << 'Pawn cant be moved to its own position' if no_move(x,y, i, j)
-    return if err_msg.length == 0
+    err_msg << 'Invalid start position' if empty_space(from_x, from_y) || not_players_pawn(from_x, from_y)
+    err_msg << 'Outside board boundaries' unless within_boundary?(to_x, to_y)
+    err_msg << 'Pawns can move only One space at a time' if move_too_far(from_x, from_y, to_x, to_y)
+    err_msg << 'Pawn cant be moved to its own position' if no_move(from_x, from_y, to_x, to_y)
+    return if err_msg.empty?
 
     @invalid_move = true
     print_error err_msg.join(', ')
   end
 
-  def move(x, y, i, j)
+  def move(from_x, from_y, to_x, to_y)
     @invalid_move = false
-    validate(x, y, i, j)
-    kill(x, y, i, j) unless empty_space(i, j)
+    validate(from_x, from_y, to_x, to_y)
+    kill(from_x, from_y, to_x, to_y) unless empty_space(to_x, to_y)
     return if @invalid_move
 
-    gp = @board.remove(x, y)
-    @board.place(gp, i, j)
+    gp = @board.remove(from_x, from_y)
+    @board.place(gp, to_x, to_y)
   end
 
   def play
-    x, y = get_move_from_position
-    i, j = get_move_to_position
-    move(x, y, i, j)
-    print "Player id: #{@player_playing} has won" if has_won?
+    from_x, from_y = move_from_position
+    to_x, to_y = move_to_position
+    move(from_x, from_y, to_x, to_y)
+    print "Player id: #{@player_playing} has won" if won?
     show
     unless @invalid_move
       @player_playing ^= 1
@@ -94,26 +97,26 @@ class Game
     play
   end
 
-  def get_input
-    i = gets.chomp.to_i
-    j = gets.chomp.to_i
-    [i, j]
+  def input
+    x = gets.chomp.to_i
+    y = gets.chomp.to_i
+    [x, y]
   end
 
-  def get_move_from_position
+  def move_from_position
     p 'Input row and column to move from: '
-    tuple = get_input
+    input
   end
 
-  def get_move_to_position
+  def move_to_position
     p 'Input row and column to move to: '
-    get_input
+    input
   end
 
   def show
     p 'Now showing on request....'
-     @board.print
+    @board.print
   end
 end
 
-g = Game.new
+Game.new

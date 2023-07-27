@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class GamePiece
   attr_reader :color
 
@@ -12,9 +14,9 @@ class GamePiece
 
   def priority
     return 2 if @rank == 'ST'
-      
+
     return 1 if @rank == 'SR'
-      
-    return 0  
+
+    0
   end
 end
