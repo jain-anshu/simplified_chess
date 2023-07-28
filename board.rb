@@ -3,26 +3,13 @@
 class Board
   attr_reader :b
 
+  GAMEPIECE_CONFIG = %w[JR JR SR ST ST SR JR JR].freeze
+  BOARD_SIZE = 8
   def initialize
     puts 'Game starts now'.green
-    @b = Array.new(8) { Array.new(8, '-') }
-    @b[0][0] = GamePiece.new('R', 'JR')
-    @b[0][1] = GamePiece.new('R', 'JR')
-    @b[0][2] = GamePiece.new('R', 'SR')
-    @b[0][3] = GamePiece.new('R', 'ST')
-    @b[0][4] = GamePiece.new('R', 'ST')
-    @b[0][5] = GamePiece.new('R', 'SR')
-    @b[0][6] = GamePiece.new('R', 'JR')
-    @b[0][7] = GamePiece.new('R', 'JR')
-
-    @b[7][0] = GamePiece.new('B', 'JR')
-    @b[7][1] = GamePiece.new('B', 'JR')
-    @b[7][2] = GamePiece.new('B', 'SR')
-    @b[7][3] = GamePiece.new('B', 'ST')
-    @b[7][4] = GamePiece.new('B', 'ST')
-    @b[7][5] = GamePiece.new('B', 'SR')
-    @b[7][6] = GamePiece.new('B', 'JR')
-    @b[7][7] = GamePiece.new('B', 'JR')
+    @b = Array.new(BOARD_SIZE) { Array.new(BOARD_SIZE, '-') }
+    @b[0] = @b[0].map.with_index { |_cell, i| GamePiece.new('R', GAMEPIECE_CONFIG[i]) }
+    @b[7] = @b[7].map.with_index { |_cell, i| GamePiece.new('B', GAMEPIECE_CONFIG[i]) }
   end
 
   def print

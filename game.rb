@@ -9,12 +9,14 @@ require 'colorize'
 class Game
   attr_reader :board
 
+  COLORS = %w[R B].freeze
+  BOARD_SIZE = 8
+  NUM_OF_GAMEPIECES = 8
   def initialize(board: Board.new, players: Array.new(2) { Player.new })
     @board = board
     @players = players
-    @pieces_count = [8, 8]
-    @players[0].color = 'R'
-    @players[1].color = 'B'
+    @pieces_count = [NUM_OF_GAMEPIECES, NUM_OF_GAMEPIECES]
+    @players.each.with_index { |_, i| @players[i].color = COLORS[i] }
     @player_playing = 0
     @other_player = 1
     @invalid_move = false
